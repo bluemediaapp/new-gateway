@@ -57,13 +57,17 @@ def get_variable(variable, groups):
         data = request.headers[variable["query"]]
     else:
         raise TypeError("Unknown variable source: %s" % source)
-    variable_type = variables.get("type")
+    variable_type = variable.get("type")
     if variable_type is None:
         return data
     
     # Types
     if variable_type == "int":
-        return int(data)
+        try:
+            int(data)
+        except:
+            raise ValueError("Criteria not met for type %s. Needs to be int." % variable_type)
+        return data
     raise TypeError("Unknown variable type: %s" % variable_type)
 
 def get_variables(route, groups):
@@ -71,7 +75,6 @@ def get_variables(route, groups):
     for variable in route["variables"]:
         variables[variable["name"]] = get_variable(variable, groups)
     return variables
-
 
 @app.route("/api/<path:path>")
 def redirect(path):
@@ -82,17 +85,20 @@ def redirect(path):
         return "No route found.", 404
     route, match = res
     # Variables
-    variables = get_variables(route, match.groups())
+    try:
+        variables = get_variables(route, match.groups())
+    except ValueError as e:
+        return str(e), 400
 
     # Auth
-    if auth["require_auth"]:
+    if route["require_auth"]:
         if "token" not in request.headers.keys():
             return "Authentication required", 401
         try:
             auth_data = security.loads(token)
         except:
             return "Bad token", 401
-        user_login = users_login_collection.find_one({"_id": auth["user_id"]})
+        user_login = users_login_collection.find_one({"_id": auth_data["user_id"]})
         if user_login is None:
             return "Account can no longer be used.", 403
         if user_login["password_change_id"] != auth_data["password_change_id"]:
@@ -102,6 +108,8 @@ def redirect(path):
 
     # Get the internal URL
     internal_endpoint = env["INTERNAL_URL_" + route["type"].upper()]
-    internal_url = route["internal_url"].format(internal_endpoint, **variables)
+    internal_url = internal_endpoint + route["internal_url"]
+
+    # Parse headers
     print("Showing %s" % internal_url)
-    return {"url": internal_url}
+    return {"url": internal_url, "variables": variables}

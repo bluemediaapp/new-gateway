@@ -3,6 +3,24 @@
         "url": "/live/recommended",
         "method": "GET",
         "type": "videos",
-        "internal_url": "{}/user/recommended"
+        "internal_url": "/user/recommended",
+        "variables": [],
+        "headers": [],
+        "require_auth": true
+    },
+    {
+        "url": "/live/test/(.)",
+        "method": "GET",
+        "type": "videos",
+        "internal_url": "/user/owo",
+        "variables": [
+            {
+                "name": "test",
+                "source": "url",
+                "query": 0,
+                "type": "int"
+            }
+        ],
+        "require_auth": false
     }
 ]
