@@ -97,6 +97,7 @@ def redirect(path):
             return "Account can no longer be used.", 403
         if user_login["password_change_id"] != auth_data["password_change_id"]:
             return "Authentication expired.", 401
+        variables["auth_user_id"] = auth_data["user_id"]
 
 
     # Get the internal URL
