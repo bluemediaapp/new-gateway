@@ -1,0 +1,8 @@
+[
+    {
+        "url": "/live/recommended",
+        "method": "GET",
+        "type": "videos",
+        "internal_url": "{}/user/recommended"
+    }
+]
