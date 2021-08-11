@@ -76,7 +76,7 @@ def get_variables(route, groups):
         variables[variable["name"]] = get_variable(variable, groups)
     return variables
 
-@app.route("/api/<path:path>")
+@app.route("/api/<path:path>", methods=["GET", "POST", "DELETE")
 def redirect(path):
     # Get the correct route
     path = "/" + path

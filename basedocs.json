@@ -1,0 +1,27 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Bloo api",
+        "termsOfService": "https://github.com/bluemediaapp/terms",
+        "contact": {
+            "url": "https://github.com/bluemediaapp/"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://mit-license.org/"
+        }
+    },
+    "host": "blue.farfrom.world",
+    "basePath": "/api",
+    "schemes": [
+        "https"
+    ],
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "token",
+            "in": "header"
+        }
+    }
+}
