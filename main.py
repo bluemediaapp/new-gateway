@@ -113,10 +113,12 @@ def redirect(path):
 
 
     # Proxy the request
-    if route.get("attach_content", False) is True:
-        raise NotImplementedError("Content forwarding is not implemented yet.")
+
     try:
-        r = post(internal_url, headers=variables, stream=True)
+        if route.get("attach_content", False) is True:
+            r = post(internal_url, headers=variables, stream=True, data=request.get_data())
+        else:
+            r = post(internal_url, headers=variables, stream=True)
     except RequestsConnectionError:
         return "Microservice down.", 500
 
