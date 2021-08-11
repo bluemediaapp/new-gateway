@@ -23,5 +23,93 @@
             "name": "token",
             "in": "header"
         }
+    },
+
+    "definitions": {
+        "User": {
+            "type": "object",
+            "required": [
+                "id",
+                "username",
+                "roles"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "The user id. Snowflake starting at 1st january 2020"
+                },
+                "username": {
+                    "type": "string",
+                    "description": "User specified username."
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "List of permission roles the user has"
+                }
+            }
+        },
+        "Video": {
+            "type": "object",
+            "required": [
+                "id",
+                "description",
+                "series",
+                "public",
+                "creator_id",
+                "tags",
+                "storage_key"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "The video id. Snowflake starting at 1st january 2020"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "User provided video description. Max 255 characters"
+                },
+                "series": {
+                    "type": "string",
+                    "description": "Series ID"
+                },
+                "public": {
+                    "type": "boolean",
+                    "description": "Only uploader/admins have access to this video. This gets set when a video gets taken down."
+                },
+                "creator_id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "The id of the creator. Snowflake starting at 1st january 2020"
+                },
+                "likes": {
+                    "type": "integer",
+                    "format": "int64",
+                    "description": "The amount of likes on the video. This may not be 100% accurate and might be moved in the future."
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of all hashtags in the video. This is just meant for internal use, although it's public"
+                },
+                "modifiers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "A list of algorithm modifiers to change how well it does. This is just meant for internal use and will soon be removed."
+                },
+                "storage_key": {
+                    "type": "string",
+                    "description": "A sia storage key. We recommend using the internal view video endpoint as it's faster, although you are free to use it if you want."
+                }
+            }
+        }
     }
 }

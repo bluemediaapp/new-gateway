@@ -1,4 +1,5 @@
 from json import loads, dumps
+from yaml import dump as yamldumps
 
 # Load the routes
 with open("routes.json") as f:
@@ -45,7 +46,7 @@ for route in routes:
     data["tags"] = [route["type"]]
     # Responses
     data["responses"] = {
-        "200": {
+        200: {
             "description": "Ok."
         }
     }
@@ -59,13 +60,21 @@ for route in routes:
 
     # Custom responses
     for response in route.get("responses", []):
+        doc_response = data["responses"].get(response["status"])
         if response.get("override", False) or response["status"] not in data["responses"]:
             data["responses"][response["status"]] = {
                 "description": response["description"]
             }
-            continue
-        description = data["responses"][response["status"]]["description"] 
-        data["responses"][response["status"]]["description"] = "%s / %s" % (description, response["description"])
+            doc_response = data["responses"].get(response["status"])
+        else:
+            doc_response = data["responses"][response["status"]]
+            description = doc_response["description"]
+            doc_response["description"] = "%s / %s" % (description, response["description"])
+        
+        if response.get("schema"):
+            doc_response["schema"] = {
+                "$ref": "#/definitions/%s" % response["schema"]
+            }
 
 
     # Parameters
@@ -120,3 +129,4 @@ docs["tags"] = tags
 # Output it
 #print(dumps(docs, indent=4))
 print(dumps(docs))
+#print(yamldumps(docs))

@@ -16,6 +16,12 @@
         ],
         "responses": [
             {
+                "status": 200,
+                "description": "User fetched",
+                "override": true,
+                "schema": "User"
+            },
+            {
                 "status": 404,
                 "description": "User not found."
             }
@@ -38,6 +44,12 @@
             }
         ],
         "responses": [
+            {
+                "status": 200,
+                "description": "Video metadata fetched!",
+                "override": true,
+                "schema": "Video"
+            },
             {
                 "status": 403,
                 "description": "Video was marked as private and you don't have permission to access it"
@@ -194,6 +206,12 @@
             }
         ],
         "responses": [
+            {
+                "status": 200,
+                "description": "Video uploaded!",
+                "override": true,
+                "schema": "Video"
+            },
             {
                 "status": 400,
                 "description": "Description was too long. / Unsupported file format (mp4 only)"
