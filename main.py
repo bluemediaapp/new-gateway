@@ -1,9 +1,10 @@
 from json import loads
 import re
-from flask import Flask, request
+from flask import Flask, request, make_response
 from os import environ as env
 from itsdangerous import URLSafeSerializer
 from pymongo import MongoClient
+from requests import post, ConnectionError as RequestsConnectionError
 
 # Load the routes
 routes = []
@@ -110,6 +111,17 @@ def redirect(path):
     internal_endpoint = env["INTERNAL_URL_" + route["type"].upper()]
     internal_url = internal_endpoint + route["internal_url"]
 
-    # Parse headers
-    print("Showing %s" % internal_url)
-    return {"url": internal_url, "variables": variables}
+
+    # Proxy the request
+    if route.get("attach_content", False) is True:
+        raise NotImplementedError("Content forwarding is not implemented yet.")
+    try:
+        r = post(internal_url, headers=variables, stream=True)
+    except RequestsConnectionError:
+        return "Microservice down.", 500
+
+
+    resp = make_response(r.content, r.status_code)
+    for name, value in r.headers.items():
+        resp.headers[name] = value
+    return resp
