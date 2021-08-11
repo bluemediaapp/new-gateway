@@ -1,4 +1,4 @@
-from json import loads
+from json import loads, dumps
 
 # Load the routes
 with open("routes.json") as f:
@@ -41,6 +41,7 @@ docs["paths"] = {}
 for route in routes:
     url = parse_url(route["url"], route["variables"])
     data = {}
+    data["summary"] = route["name"]
     data["tags"] = [route["type"]]
     # Responses
     data["responses"] = {
@@ -81,6 +82,11 @@ for route in routes:
         # Variable sources
         if variable["source"] == "url":
             parameter["in"] = "path"
+        elif variable["source"] == "headers":
+            parameter["in"] = "header"
+        elif variable["source"] == "form":
+            parameter["in"] = "formData"
+            data["consumes"] = ["multipart/form-data"]
         else:
             raise TypeError("Unknown source %s" % variable["source"])
 
@@ -102,4 +108,6 @@ for route in routes:
         "description": "The %s microservice. Source code: https://github.com/bluemediaapp/%s" % (route["type"], route["type"])
     })
 docs["tags"] = tags
-print(docs)
+
+# Output it
+print(dumps(docs, indent=4))

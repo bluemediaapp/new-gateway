@@ -1,27 +1,211 @@
 [
     {
-        "url": "/live/recommended",
+        "name": "Get user info",
+        "url": "/cached/user/(\\d+)",
         "method": "GET",
-        "type": "videos",
-        "internal_url": "/user/recommended",
-        "variables": [],
-        "headers": [],
-        "require_auth": true
-    },
-    {
-        "url": "/live/test/(.)",
-        "method": "GET",
-        "type": "videos",
-        "internal_url": "/user/owo",
+        "type": "data",
+        "internal_url": "/user",
         "variables": [
             {
-                "name": "test",
-                "description": "Lol testing var",
+                "name": "user_id",
+                "description": "The user id to query",
                 "source": "url",
                 "query": 0,
                 "type": "int"
             }
         ],
         "require_auth": false
-    }
+    },
+    {
+        "name": "Get video info",
+        "url": "/cached/video-info/(\\d+)",
+        "method": "GET",
+        "type": "data",
+        "internal_url": "/video",
+        "variables": [
+            {
+                "name": "video_id",
+                "description": "The video id to query",
+                "source": "url",
+                "query": 0,
+                "type": "int"
+            }
+        ],
+        "require_auth": false
+    },
+    {
+        "name": "Get video",
+        "url": "/cached/video/(\\d+)",
+        "method": "GET",
+        "type": "cdn",
+        "internal_url": "/videos",
+        "variables": [
+            {
+                "name": "video_id",
+                "description": "The video id to fetch from",
+                "source": "url",
+                "query": 0,
+                "type": "int"
+            }
+        ],
+        "require_auth": false
+    },
+    {
+        "name": "Get user avatar",
+        "url": "/cached/avatar/(\\d+)",
+        "method": "GET",
+        "type": "avatargen",
+        "internal_url": "/",
+        "variables": [
+            {
+                "name": "user_id",
+                "description": "The user id to generate avatar for",
+                "source": "url",
+                "query": 0,
+                "type": "int"
+            }
+        ],
+        "require_auth": false
+    },
+
+
+
+
+
+
+
+
+    {
+        "name": "Get recommended videos",
+        "url": "/live/recommended/",
+        "method": "GET",
+        "type": "recommended",
+        "internal_url": "/user",
+        "variables": [],
+        "require_auth": true
+    },
+    {
+        "name": "Login",
+        "url": "/live/login",
+        "method": "POST",
+        "type": "users",
+        "internal_url": "/login",
+        "variables": [
+            {
+                "name": "username",
+                "description": "Username to log into",
+                "source": "headers",
+                "query": "username",
+                "type": "str",
+                "max": 255
+            },
+            {
+                "name": "password",
+                "description": "Password to log in with",
+                "source": "headers",
+                "query": "password",
+                "type": "str"
+            }
+        ],
+        "require_auth": false
+    },
+    {
+        "name": "Register",
+        "url": "/live/register",
+        "method": "POST",
+        "type": "users",
+        "internal_url": "/register",
+        "variables": [
+            {
+                "name": "username",
+                "description": "Your public username",
+                "source": "headers",
+                "query": "username",
+                "type": "str",
+                "max": 255
+            },
+            {
+                "name": "password",
+                "description": "Password to register with",
+                "source": "headers",
+                "query": "password",
+                "type": "str"
+            }
+        ],
+        "require_auth": false
+    },
+    {
+        "name": "Upload video",
+        "url": "/live/upload-video",
+        "method": "POST",
+        "type": "videos",
+        "internal_url": "/upload",
+        "variables": [
+            {
+                "name": "description",
+                "description": "Description to add to the video (255 characters max)",
+                "source": "form",
+                "type": "str"
+            },
+            {
+                "name": "series",
+                "description": "A random string for the series. To add to the series put the same string in another upload. Cannot be someone elses series.",
+                "source": "form",
+                "type": "str"
+            }
+        ],
+        "require_auth": true,
+        "attach_content": true
+    },
+    {
+        "name": "Delete video",
+        "url": "/live/delete-video/(\\d+)",
+        "method": "DELETE",
+        "type": "videos",
+        "internal_url": "/delete",
+        "variables": [
+            {
+                "name": "video-id",
+                "description": "The id of the video to delete. Has to be your own",
+                "source": "url",
+                "query": 0,
+                "type": "int"
+            }
+        ],
+        "require_auth": true
+    },
+    {
+        "name": "Mark video as watched",
+        "url": "/live/set-watched/(\\d+)",
+        "method": "POST",
+        "type": "interactions",
+        "internal_url": "/watched",
+        "variables": [
+            {
+                "name": "video-id",
+                "description": "The id of the video to mark as watched.",
+                "source": "url",
+                "query": 0,
+                "type": "int"
+            }
+        ],
+        "require_auth": true
+    },
+    {
+        "name": "Like video",
+        "url": "/live/like-video/(\\d+)",
+        "method": "POST",
+        "type": "interactions",
+        "internal_url": "/like",
+        "variables": [
+            {
+                "name": "video-id",
+                "description": "The id of the video to like.",
+                "source": "url",
+                "query": 0,
+                "type": "int"
+            }
+        ],
+        "require_auth": true
+    },
 ]
