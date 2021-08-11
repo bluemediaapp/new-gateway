@@ -76,7 +76,7 @@ def get_variables(route, groups):
         variables[variable["name"]] = get_variable(variable, groups)
     return variables
 
-@app.route("/api/<path:path>", methods=["GET", "POST", "DELETE")
+@app.route("/api/<path:path>", methods=["GET", "POST", "DELETE"])
 def redirect(path):
     # Get the correct route
     path = "/" + path
@@ -100,7 +100,7 @@ def redirect(path):
             return "Bad token", 401
         user_login = users_login_collection.find_one({"_id": auth_data["user_id"]})
         if user_login is None:
-            return "Account can no longer be used.", 403
+            return "Account can no longer be used.", 401
         if user_login["password_change_id"] != auth_data["password_change_id"]:
             return "Authentication expired.", 401
         variables["auth_user_id"] = auth_data["user_id"]

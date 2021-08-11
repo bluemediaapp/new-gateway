@@ -55,10 +55,18 @@ for route in routes:
         data["responses"][401] = {
             "description": "Invalid token or token expired."
         }
-        data["responses"][403] = {
-            "description": "Account has been deleted."
-        }
         data["security"] = [{"api_key": []}]
+
+    # Custom responses
+    for response in route.get("responses", []):
+        if response.get("override", False) or response["status"] not in data["responses"]:
+            data["responses"][response["status"]] = {
+                "description": response["description"]
+            }
+            continue
+        description = data["responses"][response["status"]]["description"] 
+        data["responses"][response["status"]]["description"] = "%s / %s" % (description, response["description"])
+
 
     # Parameters
     parameters = []
@@ -110,4 +118,5 @@ for route in routes:
 docs["tags"] = tags
 
 # Output it
-print(dumps(docs, indent=4))
+#print(dumps(docs, indent=4))
+print(dumps(docs))

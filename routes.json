@@ -14,6 +14,12 @@
                 "type": "int"
             }
         ],
+        "responses": [
+            {
+                "status": 404,
+                "description": "User not found."
+            }
+        ],
         "require_auth": false
     },
     {
@@ -29,6 +35,16 @@
                 "source": "url",
                 "query": 0,
                 "type": "int"
+            }
+        ],
+        "responses": [
+            {
+                "status": 403,
+                "description": "Video was marked as private and you don't have permission to access it"
+            },
+            {
+                "status": 404,
+                "description": "Video not found."
             }
         ],
         "require_auth": false
@@ -48,7 +64,14 @@
                 "type": "int"
             }
         ],
-        "require_auth": false
+        "responses": [
+            {
+                "status": 403,
+                "description": "Video was marked as private and you don't have permission to access it"
+            }
+        ],
+        "require_auth": false,
+        "pass_roles": true
     },
     {
         "name": "Get user avatar",
@@ -107,6 +130,16 @@
                 "type": "str"
             }
         ],
+        "responses": [
+            {
+                "status": 400,
+                "description": "Username or password not provided"
+            },
+            {
+                "status": 403,
+                "description": "Invalid username or password"
+            }
+        ],
         "require_auth": false
     },
     {
@@ -132,6 +165,12 @@
                 "type": "str"
             }
         ],
+        "responses": [
+            {
+                "status": 400,
+                "description": "Username or password not provided / Username already taken"
+            }
+        ],
         "require_auth": false
     },
     {
@@ -154,6 +193,12 @@
                 "type": "str"
             }
         ],
+        "responses": [
+            {
+                "status": 400,
+                "description": "Description was too long. / Unsupported file format (mp4 only)"
+            }
+        ],
         "require_auth": true,
         "attach_content": true
     },
@@ -170,6 +215,16 @@
                 "source": "url",
                 "query": 0,
                 "type": "int"
+            }
+        ],
+        "responses": [
+            {
+                "status": 403,
+                "description": "You did not create this video."
+            },
+            {
+                "status": 404,
+                "description": "Video not found."
             }
         ],
         "require_auth": true
@@ -189,6 +244,16 @@
                 "type": "int"
             }
         ],
+        "responses": [
+            {
+                "status": 404,
+                "description": "Video not found."
+            },
+            {
+                "status": 412,
+                "description": "You have already marked the video as watched."
+            }
+        ],
         "require_auth": true
     },
     {
@@ -206,6 +271,16 @@
                 "type": "int"
             }
         ],
+        "responses": [
+            {
+                "status": 404,
+                "description": "Video not found."
+            },
+            {
+                "status": 412,
+                "description": "You have already liked this video"
+            }
+        ],
         "require_auth": true
-    },
+    }
 ]
