@@ -5,4 +5,4 @@ COPY poetry.lock ./
 COPY pyproject.toml ./
 RUN poetry install
 COPY . ./
-CMD ["poetry", "run", "waitress-serve", "'--listen=*:8080'", "main:app"]
+CMD ["poetry", "run", "waitress-serve", "--listen=*:5000", "main:app"]
