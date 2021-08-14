@@ -69,6 +69,8 @@ def get_variable(variable, groups):
         except:
             raise ValueError("Criteria not met for type %s. Needs to be int." % variable_type)
         return data
+    elif variable_type == "str":
+        return data
     raise TypeError("Unknown variable type: %s" % variable_type)
 
 def get_variables(route, groups):
