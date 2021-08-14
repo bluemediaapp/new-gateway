@@ -27,7 +27,7 @@ def load_routes():
 
 load_routes()
 app = Flask(__name__)
-security = URLSafeSerializer(env["SECRET_KEY"], "bloo-auth")
+security = URLSafeSerializer(env["SECRET_KEY"], "auth")
 mongo = MongoClient(env["mongo_uri"])
 blue = mongo["blue"]
 users_login_collection = blue["users_login"]
