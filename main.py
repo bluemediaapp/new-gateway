@@ -5,6 +5,10 @@ from os import environ as env
 from itsdangerous import URLSafeSerializer
 from pymongo import MongoClient
 from requests import post, ConnectionError as RequestsConnectionError
+from generatedocs import docs
+from json import dumps
+
+from errors import * 
 
 # Load the routes
 routes = []
@@ -20,6 +24,7 @@ def load_routes():
             "type": raw_route["type"],
             "variables": raw_route["variables"],
             "require_auth": raw_route["require_auth"],
+            "attach_content": raw_route.get("attach_content"),
         }
         routes.append(route)
     print("Loaded %s routes" % len(routes))
@@ -55,7 +60,12 @@ def get_variable(variable, groups):
     if source == "url":
         data = groups[variable["query"]]
     elif source == "headers":
-        data = request.headers[variable["query"]]
+        data = request.headers.get(variable["query"])
+        if data is None and variable.get("required", True):
+            raise MissingRequiredArgumentError(variable["name"])
+
+    elif source == "form":
+        return # Should be passed by attach_content
     else:
         raise TypeError("Unknown variable source: %s" % source)
     variable_type = variable.get("type")
@@ -67,7 +77,7 @@ def get_variable(variable, groups):
         try:
             int(data)
         except:
-            raise ValueError("Criteria not met for type %s. Needs to be int." % variable_type)
+            raise CriteriaNotFilledError(variable["name"], "int")
         return data
     elif variable_type == "str":
         return data
@@ -76,7 +86,9 @@ def get_variable(variable, groups):
 def get_variables(route, groups):
     variables = {}
     for variable in route["variables"]:
-        variables[variable["name"]] = get_variable(variable, groups)
+        if (variable_data := get_variable(variable, groups)) is None:
+            continue
+        variables[variable["name"]] = variable_data
     return variables
 
 @app.route("/api/<path:path>", methods=["GET", "POST", "DELETE"])
@@ -91,14 +103,18 @@ def redirect(path):
     try:
         variables = get_variables(route, match.groups())
     except ValueError as e:
-        return str(e), 400
+        return {"detail": str(e)}, 400
+    except MissingRequiredArgumentError as e:
+        return {"detail": "Missing required variable \"%s\"" % e.args[0] }, 400
+    except CriteriaNotFilledError as e:
+        return {"detail": "%s could not be converted to %s" % (e.variable_name, e.variable_type)}, 400
 
     # Auth
     if route["require_auth"]:
-        if "token" not in request.headers.keys():
+        if "Authorization" not in request.headers.keys():
             return "Authentication required", 401
         try:
-            auth_data = security.loads(token)
+            auth_data = security.loads(request.headers["Authorization"])
         except:
             return "Bad token", 401
         user_login = users_login_collection.find_one({"_id": auth_data["user_id"]})
@@ -106,7 +122,7 @@ def redirect(path):
             return "Account can no longer be used.", 401
         if user_login["password_change_id"] != auth_data["password_change_id"]:
             return "Authentication expired.", 401
-        variables["auth_user_id"] = auth_data["user_id"]
+        variables["auth_user_id"] = str(auth_data["user_id"])
 
 
     # Get the internal URL
@@ -115,17 +131,21 @@ def redirect(path):
 
 
     # Proxy the request
-
     try:
         if route.get("attach_content", False) is True:
+            # Attach content type headers
+            variables["Content-Type"] = request.headers["Content-Type"]
             r = post(internal_url, headers=variables, stream=True, data=request.get_data())
         else:
             r = post(internal_url, headers=variables, stream=True)
     except RequestsConnectionError:
         return "Microservice down.", 500
 
-
     resp = make_response(r.content, r.status_code)
     for name, value in r.headers.items():
         resp.headers[name] = value
     return resp
+
+@app.route("/api/cached/docs")
+def get_docs():
+    return docs

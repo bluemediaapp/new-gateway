@@ -228,7 +228,7 @@
         "internal_url": "/delete",
         "variables": [
             {
-                "name": "video-id",
+                "name": "video_id",
                 "description": "The id of the video to delete. Has to be your own",
                 "source": "url",
                 "query": 0,
@@ -255,7 +255,7 @@
         "internal_url": "/watched",
         "variables": [
             {
-                "name": "video-id",
+                "name": "video_id",
                 "description": "The id of the video to mark as watched.",
                 "source": "url",
                 "query": 0,
@@ -282,7 +282,7 @@
         "internal_url": "/like",
         "variables": [
             {
-                "name": "video-id",
+                "name": "video_id",
                 "description": "The id of the video to like.",
                 "source": "url",
                 "query": 0,
@@ -297,6 +297,27 @@
             {
                 "status": 412,
                 "description": "You have already liked this video"
+            }
+        ],
+        "require_auth": true
+    },
+    {
+        "name": "Get current user info",
+        "url": "/cached/user/@me",
+        "method": "GET",
+        "type": "data",
+        "internal_url": "/user",
+        "variables": [],
+        "responses": [
+            {
+                "status": 200,
+                "description": "User fetched",
+                "override": true,
+                "schema": "User"
+            },
+            {
+                "status": 404,
+                "description": "User not found."
             }
         ],
         "require_auth": true

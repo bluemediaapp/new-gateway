@@ -127,6 +127,5 @@ for route in routes:
 docs["tags"] = tags
 
 # Output it
-#print(dumps(docs, indent=4))
-print(dumps(docs))
-#print(yamldumps(docs))
+if __name__ == "__main__":
+    print(dumps(docs))
