@@ -144,6 +144,7 @@ def redirect(path):
     resp = make_response(r.content, r.status_code)
     for name, value in r.headers.items():
         resp.headers[name] = value
+    resp.headers["Internal-Status"] = "Forwarded"
     return resp
 
 @app.route("/api/cached/docs")
